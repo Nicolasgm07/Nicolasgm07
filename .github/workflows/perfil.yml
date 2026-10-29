@@ -25,6 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Va antes que la serpiente: snk corre en Docker como root y dejaría dist/ sin permisos
+      - name: Estadísticas, lenguajes y cuenta atrás
+        run: python3 scripts/dynamic/generate.py --out dist
+        env:
+          GH_USER: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # La serpiente, exactamente igual que antes
       - uses: Platane/snk@v3
         with:
@@ -32,12 +39,6 @@ jobs:
           outputs: |
             dist/github-snake.svg?color_snake=#0969da
             dist/github-snake-dark.svg?palette=github-dark&color_snake=#79c0ff
-
-      - name: Estadísticas, lenguajes y cuenta atrás
-        run: python3 scripts/dynamic/generate.py --out dist
-        env:
-          GH_USER: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: crazy-max/ghaction-github-pages@v4
         with:
